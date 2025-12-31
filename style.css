@@ -441,40 +441,85 @@ input {
   transform: scale(0.95);
 }
 
+/* --- Article Styles (Theme Aware) --- */
 .article-container {
-  max-width: 700px; /* Wider for easier reading */
+  max-width: 700px;
   padding: 30px;
   margin-top: 20px;
+  background: var(--bg-container); /* Use the dynamic background */
+  color: var(--text-main); /* Use the dynamic text color */
 }
 
 .article-header h1 {
   font-size: 1.8rem;
-  color: var(--dark);
+  color: var(--green-main); /* Use your primary green */
   margin-bottom: 15px;
 }
 
 .tax-article h2 {
   margin-top: 35px;
-  color: var(--green);
-  border-bottom: 2px solid #eee;
+  color: var(--green-main);
+  border-bottom: 2px solid rgba(0, 135, 81, 0.2); /* Soft green line */
   padding-bottom: 5px;
 }
 
-.tax-article ul {
-  padding-left: 20px;
-}
-
+.tax-article p,
 .tax-article li {
-  margin-bottom: 12px;
-  line-height: 1.6;
+  line-height: 1.7;
+  margin-bottom: 15px;
 }
 
+/* --- Summary Box (The "💡 Bottom Line") --- */
 .summary-box {
-  background: #fffbeb;
+  background: #fffbeb; /* Light yellow for light mode */
   border: 1px solid #fef3c7;
   padding: 20px;
   border-radius: 12px;
   margin-top: 40px;
+  color: #92400e; /* Dark brown text */
+}
+
+/* Dark Mode adjustment for Summary Box */
+[data-theme="dark"] .summary-box {
+  background: rgba(251, 191, 36, 0.1); /* Subtle gold tint */
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  color: #fcd34d; /* Bright gold text so it pops */
+}
+
+/* --- Legal Disclaimer --- */
+.legal-disclaimer {
+  margin-top: 40px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  border-left: 4px solid #64748b;
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .legal-disclaimer {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Ensure all article text is visible in Dark Mode */
+.tax-article p,
+.tax-article li,
+.tax-article strong,
+.article-header p {
+  color: var(--text-main); /* This uses your theme-switching variable */
+  transition: color 0.3s ease;
+}
+
+/* If you find the variable isn't working, force it for Dark Mode specifically */
+[data-theme="dark"] .tax-article p,
+[data-theme="dark"] .tax-article li,
+[data-theme="dark"] .article-header .intro {
+  color: #e2e8f0; /* A clean, bright off-white for high contrast */
+}
+
+/* Fix for the Summary Box paragraphs specifically */
+[data-theme="dark"] .summary-box p {
+  color: #fcd34d; /* Keeps the 'Bottom Line' text gold/visible */
 }
 
 .summary-box h3 {
