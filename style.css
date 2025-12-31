@@ -114,24 +114,51 @@ input {
   box-sizing: border-box;
 }
 
+/* Results Container Base */
 .results {
-  background: #f0fdf4;
-  padding: 15px;
-  border-radius: 8px;
+  background: #f0fdf4; /* Default Light Mint */
+  padding: 20px;
+  border-radius: 12px;
   margin-top: 15px;
+  border: 1px solid rgba(0, 135, 81, 0.1);
+  transition: all 0.3s ease;
 }
+
+/* Dark Mode Results */
+[data-theme="dark"] .results {
+  background: rgba(34, 197, 94, 0.1); /* Very subtle dark green tint */
+  border: 1px solid var(--green-main);
+  color: var(--text-main);
+}
+
 .result-row {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
-  font-weight: 500;
+  margin-bottom: 12px;
+  font-weight: 600; /* Made slightly bolder for readability */
 }
+
+/* Badges */
 .badge {
-  padding: 2px 8px;
-  border-radius: 4px;
-  background: #eee;
-  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
 }
+
+/* Specific Badge Colors for Dark Mode */
+[data-theme="dark"] .exempt {
+  background: #166534; /* Deep Green */
+  color: #dcfce7;
+}
+
+[data-theme="dark"] .taxable {
+  background: #991b1b; /* Deep Red */
+  color: #fee2e2;
+}
+
+/* Fallback for Light Mode if not specified */
 .exempt {
   background: #dcfce7;
   color: #166534;
@@ -306,7 +333,7 @@ input {
   transition: 0.3s;
   /* font-weight: bold; */
   margin-left: 15px;
-  font-size: 0.8rem;
+  font-size: 1rem;
   text-decoration: none;
   color: var(--green-main);
   font-weight: bold;
@@ -327,11 +354,10 @@ input {
     font-size: 0.75rem;
   }
   .year-text {
-        font-size: 0.6rem;
-        padding: 1px 4px;
-    }
+    font-size: 0.6rem;
+    padding: 1px 4px;
+  }
 }
-
 
 .tax-article h2 {
   color: var(--green);
