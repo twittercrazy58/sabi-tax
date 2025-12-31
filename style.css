@@ -6,6 +6,14 @@
   --text-muted: #475569;
   --green-main: #008751;
   --nav-bg: rgba(255, 255, 255, 0.8);
+  --font-main: "Plus Jakarta Sans", sans-serif;
+}
+
+#netPay,
+#monthlyTax,
+#monthlyRent,
+#monthlySalary {
+  font-variant-numeric: tabular-nums;
 }
 
 [data-theme="dark"] {
@@ -34,7 +42,7 @@
 }
 
 body {
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-main);
   background-color: var(--bg-main);
   color: var(--text-main);
   background-image: radial-gradient(
@@ -146,7 +154,7 @@ input {
 .theme-btn {
   position: absolute;
   right: 20px; /* Adjust this to move it further from or closer to the edge */
-  top: 50%;
+  top: 20%;
   transform: translateY(-50%); /* This perfectly centers it vertically */
 
   background: none;
@@ -209,42 +217,44 @@ input {
 }
 /* Modal Styles */
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 9999; /* Higher than the nav and everything else */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    /* Hardcode the black overlay so it always dims the screen regardless of theme */
-    background-color: rgba(0, 0, 0, 0.7); 
-    backdrop-filter: blur(4px); /* Adds a premium blurred feel to the background */
+  display: none;
+  position: fixed;
+  z-index: 9999; /* Higher than the nav and everything else */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  /* Hardcode the black overlay so it always dims the screen regardless of theme */
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(
+    4px
+  ); /* Adds a premium blurred feel to the background */
 }
 
 .modal-content {
-    background-color: var(--bg-container); /* Use the theme-aware variable */
-    color: var(--text-main); /* Ensure text color flips in dark mode */
-    margin: 15% auto;
-    padding: 25px;
-    border-radius: 20px; /* Matching your container curves */
-    width: 85%;
-    max-width: 400px;
-    border: 1px solid rgba(0, 135, 81, 0.2);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    position: relative; /* For the close button */
+  background-color: var(--bg-container); /* Use the theme-aware variable */
+  color: var(--text-main); /* Ensure text color flips in dark mode */
+  margin: 15% auto;
+  padding: 25px;
+  border-radius: 20px; /* Matching your container curves */
+  width: 85%;
+  max-width: 400px;
+  border: 1px solid rgba(0, 135, 81, 0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  position: relative; /* For the close button */
 }
 
 /* Ensure the Close (X) button is visible in both themes */
 .close {
-    color: var(--text-muted);
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
+  color: var(--text-muted);
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .close:hover {
-    color: var(--green-main);
+  color: var(--green-main);
 }
 
 .kunu-btn {
@@ -281,44 +291,47 @@ input {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 60px;
-  background: rgba(255, 255, 255, 0.8);
+  padding: 15px 20px; /* Reduced padding slightly for more "breathing room" */
+  position: relative;
+  background: var(--nav-bg);
   backdrop-filter: blur(15px);
-  position: relative; /* Stays at the top while you scroll */
   top: 0;
   z-index: 100;
   border-bottom: 1px solid rgba(0, 87, 81, 0.1);
 }
 
 .nav-links a {
-  text-decoration: none;
-  color: var(--green);
-  font-weight: bold;
+  color: var(--green-main);
+  font-weight: 700; /* Plus Jakarta Sans looks better at 700 */
+  transition: 0.3s;
+  /* font-weight: bold; */
   margin-left: 15px;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   text-decoration: none;
   color: var(--green-main);
   font-weight: bold;
-  font-size: 0.9rem;
 }
-
 
 @media (max-width: 400px) {
   .nav-links {
     display: flex;
     align-items: center;
-  margin-right: 40px;
-  gap: 15px;
-}
-
+    margin-right: 35px;
+    gap: 8px;
+    white-space: nowrap;
   }
   .logo {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
   .nav-links a {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
+  .year-text {
+        font-size: 0.6rem;
+        padding: 1px 4px;
+    }
 }
+
 
 .tax-article h2 {
   color: var(--green);
@@ -444,9 +457,10 @@ input {
 }
 
 .logo {
+  font-family: var(--font-main);
   font-size: 1.5rem;
   font-weight: 800;
-  letter-spacing: -1px;
+  letter-spacing: -0.5px;
   color: #1a1a1a;
   cursor: default;
   display: flex;
