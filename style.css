@@ -1,0 +1,499 @@
+:root {
+  /* Light Mode (Wealth Cream) */
+  --bg-main: #f4f7f2;
+  --bg-container: rgba(255, 255, 255, 0.9);
+  --text-main: #1a2e25;
+  --text-muted: #475569;
+  --green-main: #008751;
+  --nav-bg: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="dark"] {
+  /* Dark Mode (Deep Charcoal & Forest) */
+  --bg-main: #0a120e; /* Near black with green tint */
+  --bg-container: rgba(20, 30, 25, 0.95);
+  --text-main: #e2e8f0;
+  --text-muted: #94a3b8;
+  --green-main: #22c55e; /* Brighter green for dark mode */
+  --nav-bg: rgba(10, 18, 14, 0.8);
+}
+
+/* Add this to your style.css */
+[data-theme="dark"] .mini-copy-btn {
+  background: #475569; /* Slightly lighter so it's visible on dark bg */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .support-card {
+  background: rgba(255, 255, 255, 0.05); /* Make the card slightly visible */
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.modal {
+  z-index: 1000; /* Ensure this is higher than the nav and container */
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  background-image: radial-gradient(
+      at 0% 0%,
+      rgba(0, 135, 81, 0.1) 0px,
+      transparent 50%
+    ),
+    radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.05) 0px, transparent 50%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.03; /* Very faint, like a watermark */
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23004d31' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+header h1 {
+  color: var(--green);
+  margin-bottom: 5px;
+}
+
+.container {
+  background: var(--bg-container);
+  color: var(--text-main);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 135, 81, 0.1);
+  padding: 25px;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 77, 49, 0.05);
+  margin: 0 auto 30px auto;
+  max-width: 550px;
+  transition: transform 0.3s ease;
+}
+
+.container:hover {
+  transform: translateY(-5px); /* Lift up slightly when you look at it */
+}
+
+h2 {
+  font-size: 1.2rem;
+  border-left: 4px solid var(--green);
+  padding-left: 10px;
+}
+
+.input-group {
+  margin: 20px 0;
+}
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.results {
+  background: #f0fdf4;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+.badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #eee;
+  font-size: 0.8rem;
+}
+.exempt {
+  background: #dcfce7;
+  color: #166534;
+}
+.taxable {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.card {
+  border: 1px solid #eee;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.theme-btn {
+  position: absolute;
+  right: 20px; /* Adjust this to move it further from or closer to the edge */
+  top: 50%;
+  transform: translateY(-50%); /* This perfectly centers it vertically */
+
+  background: none;
+  border: 1.5px solid var(--green-main);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: 0.3s;
+  margin: 0;
+  line-height: 1;
+  z-index: 101; /* Keeps it above everything else in the nav */
+}
+
+/* Optional: Make it look better when you hover */
+.theme-btn:hover {
+  background: rgba(0, 135, 81, 0.1);
+  transform: rotate(15deg);
+}
+
+.toast {
+  position: fixed;
+  bottom: 40px; /* Moved up slightly for better visibility on mobile */
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333; /* Hardcoded dark color to ensure visibility in both modes */
+  color: white;
+  padding: 12px 25px;
+  border-radius: 50px;
+  display: none;
+  z-index: 9999; /* Higher than everything else */
+  font-weight: bold;
+  font-size: 0.9rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  animation: toastPop 0.3s ease-out;
+  white-space: nowrap;
+}
+
+/* Add this animation to make it look modern */
+@keyframes toastPop {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+  to {
+    bottom: 40px;
+    opacity: 1;
+  }
+}
+
+.disclaimer {
+  font-size: 0.7rem;
+  color: #888;
+  margin-top: 10px;
+}
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 9999; /* Higher than the nav and everything else */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    /* Hardcode the black overlay so it always dims the screen regardless of theme */
+    background-color: rgba(0, 0, 0, 0.7); 
+    backdrop-filter: blur(4px); /* Adds a premium blurred feel to the background */
+}
+
+.modal-content {
+    background-color: var(--bg-container); /* Use the theme-aware variable */
+    color: var(--text-main); /* Ensure text color flips in dark mode */
+    margin: 15% auto;
+    padding: 25px;
+    border-radius: 20px; /* Matching your container curves */
+    width: 85%;
+    max-width: 400px;
+    border: 1px solid rgba(0, 135, 81, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    position: relative; /* For the close button */
+}
+
+/* Ensure the Close (X) button is visible in both themes */
+.close {
+    color: var(--text-muted);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: var(--green-main);
+}
+
+.kunu-btn {
+  background: #f59e0b;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+  box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+}
+.account-box {
+  background: #f3f4f6;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 15px 0;
+  border: 1px dashed #ccc;
+}
+
+.share-btn {
+  background: #25d366; /* WhatsApp Green */
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 60px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(15px);
+  position: relative; /* Stays at the top while you scroll */
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(0, 87, 81, 0.1);
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--green);
+  font-weight: bold;
+  margin-left: 15px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: var(--green-main);
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+
+@media (max-width: 400px) {
+  .nav-links {
+    display: flex;
+    align-items: center;
+  margin-right: 40px;
+  gap: 15px;
+}
+
+  }
+  .logo {
+    font-size: 1.2rem;
+  }
+  .nav-links a {
+    font-size: 0.8rem;
+  }
+}
+
+.tax-article h2 {
+  color: var(--green);
+  margin-top: 25px;
+  font-size: 1.2rem;
+}
+.tax-article p {
+  line-height: 1.7;
+  margin-bottom: 15px;
+  color: #333;
+}
+.intro {
+  font-style: italic;
+  color: #666;
+  border-left: 3px solid #f59e0b;
+  padding-left: 10px;
+}
+
+/* Support Modal Styling */
+.support-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 12px 15px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.support-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.support-info .label {
+  font-size: 0.65rem;
+  font-weight: bold;
+  color: var(--green);
+  letter-spacing: 0.5px;
+}
+
+.support-info .value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 2px 0;
+}
+
+.support-info .sub-value {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.copy-btn {
+  background: var(--green-main); /* Changed from --green */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.mini-copy-btn {
+  background: #334155;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+/* Update this in your style.css */
+.mini-copy-btn:active {
+  background: var(--green-main); /* Changed from --green */
+  transform: scale(0.95);
+}
+
+.article-container {
+  max-width: 700px; /* Wider for easier reading */
+  padding: 30px;
+  margin-top: 20px;
+}
+
+.article-header h1 {
+  font-size: 1.8rem;
+  color: var(--dark);
+  margin-bottom: 15px;
+}
+
+.tax-article h2 {
+  margin-top: 35px;
+  color: var(--green);
+  border-bottom: 2px solid #eee;
+  padding-bottom: 5px;
+}
+
+.tax-article ul {
+  padding-left: 20px;
+}
+
+.tax-article li {
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.summary-box {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 40px;
+}
+
+.summary-box h3 {
+  margin-top: 0;
+  color: #92400e;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: #1a1a1a;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* The shimmering "Sabi" part */
+.sabi-text {
+  background: linear-gradient(120deg, #008751, #22c55e, #008751);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s linear infinite;
+}
+
+/* The floating 2026 */
+.year-text {
+  font-size: 0.8rem;
+  background: #333;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 6px;
+  margin-left: 5px;
+  animation: float 2s ease-in-out infinite;
+}
+
+/* Shine Animation */
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Subtle Float Animation */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Cool Hover Effect */
+.logo:hover .sabi-text {
+  filter: brightness(1.2);
+  transition: 0.3s;
+}

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nigeria 2026 Tax Hub</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav class="top-nav">
+      <div class="logo-container">
+        <div class="logo">
+          Tax<span class="sabi-text">Sabi</span>
+          <span class="year-text">2026</span>
+        </div>
+      </div>
+      <div class="nav-links">
+        <a href="#" onclick="showPage('home')">Home</a>
+
+        <button
+          id="themeToggle"
+          class="theme-btn"
+          aria-label="Toggle Dark Mode"
+        >
+          <span id="themeIcon">🌙</span>
+        </button>
+        <a href="#" onclick="showPage('about')">About the Law</a>
+      </div>
+    </nav>
+    <main>
+      <div id="homePage">
+        <header>
+          <h1>TaxSabi 2026</h1>
+          <p>Beta way to track your money and tax for 2026.</p>
+        </header>
+
+        <section class="container">
+          <h2>2026 PAYE Calculator</h2>
+
+          <div class="input-group">
+            <label>Monthly Salary (₦)</label>
+            <input
+              type="number"
+              id="monthlySalary"
+              oninput="calculateTax()"
+              placeholder="e.g. 200000"
+            />
+          </div>
+
+          <div class="input-group">
+            <label>Monthly Rent (₦)</label>
+            <input
+              type="number"
+              id="monthlyRent"
+              oninput="calculateTax()"
+              placeholder="For 20% Rent Relief"
+            />
+          </div>
+
+          <div id="resultArea" class="results">
+            <div class="result-row">
+              <span>Status:</span> <span id="taxStatus" class="badge">--</span>
+            </div>
+            <div class="result-row">
+              <span>Monthly Tax:</span> <span id="monthlyTax">₦0</span>
+            </div>
+            <div class="result-row">
+              <span>Take-Home:</span> <span id="netPay">₦0</span>
+            </div>
+          </div>
+
+          <p
+            id="complianceNotice"
+            style="
+              font-size: 0.75rem;
+              color: #d97706;
+              margin-top: 10px;
+              display: none;
+            "
+          >
+            ⚠️ Note: Your income high. Abeg make you file your returns by March
+            31st so you no go pay ₦50k fine.
+          </p>
+        </section>
+
+        <section class="container">
+          <h2>Transfer Narrations</h2>
+          <p>Use these to describe non-taxable inflows:</p>
+          <div id="narrationList"></div>
+        </section>
+
+        <div style="text-align: center; margin-bottom: 40px">
+          <button class="kunu-btn" onclick="openKunuModal()">
+            🥤 Buy me Kunu
+          </button>
+        </div>
+        <div style="text-align: center; margin-top: 10px">
+          <button class="share-btn" onclick="shareToWhatsapp()">
+            📢 Share with Friends & Family
+          </button>
+        </div>
+      </div>
+      <div id="aboutPage" style="display: none">
+        <section class="container article-container">
+          <header class="article-header">
+            <h1>The 2026 Tax Reform: The "Full Gist" for Every Nigerian</h1>
+            <p class="intro">
+              President Tinubu don sign four new laws wey go change how we
+              handle money from January 1, 2026. No be just grammar; e get how e
+              take affect your pocket. Follow me, make I break am down.
+            </p>
+          </header>
+
+          <article class="tax-article">
+            <h2>1. The Four "Power Rangers" of the New Law</h2>
+            <p>
+              Government no just pack everything into one book. They share am
+              into four different "Acts" wey go work together:
+            </p>
+            <ul>
+              <li>
+                <strong>The Nigeria Tax Act (NTA):</strong> This one na the
+                "Baba" of the laws. E tell us wetin we go pay, who go pay, and
+                how much exactly.
+              </li>
+              <li>
+                <strong>The Nigeria Tax Administration Act (NTAA):</strong> This
+                one focus on the "How." How you go file your tax online, how
+                they go track your money, and how you go pay without stress.
+              </li>
+              <li>
+                <strong>The Nigeria Revenue Service Act (NRSA):</strong> FIRS
+                don change name! Say hello to the <strong>NRS</strong>. They get
+                more power now to track every kobo wey dey move for the
+                federation.
+              </li>
+              <li>
+                <strong>The Joint Revenue Board Act (JRBA):</strong> This one na
+                to stop "Double Taxation." No be say Federal go collect, State
+                go collect, and Local Government go still come your shop. They
+                go dey work together now.
+              </li>
+            </ul>
+
+            <h2>2. The ₦800,000 Shield (Low Income Protection)</h2>
+            <p>
+              If your total salary or income in a year no reach
+              <strong>₦800,000</strong>, the law say you be "Tax Exempt." That
+              means your tax na exactly <strong>₦0.00</strong>. This na big win
+              for minimum wage earners and small hustlers because before, even
+              ₦300k earners dey pay small tax. Now, that money stay for your
+              pocket for bread and milk.
+            </p>
+
+            <h2>3. Rent & Future Relief (Paying Less Legally)</h2>
+            <p>
+              The law now sabi say life hard. So they give you "Consolidated
+              Reliefs":
+            </p>
+            <ul>
+              <li>
+                <strong>Rent Relief:</strong> You fit remove 20% of your house
+                rent (up to ₦500k) from your taxable income.
+              </li>
+              <li>
+                <strong>Pension & Health:</strong> Anything wey you dey pay for
+                Pension, NHIS, or Housing Fund (NHF), they go remove am before
+                they calculate your tax. The more you save for your future, the
+                less tax you pay today.
+              </li>
+            </ul>
+
+            <h2>4. Small Business "Peace of Mind"</h2>
+            <p>
+              If you get small business (hustle) wey the total "turnover" (money
+              wey enter) no reach <strong>₦50 Million</strong> in a year, you no
+              go pay <strong>Company Income Tax (CIT)</strong> again. Government
+              want make you use that money grow your business, buy more goods,
+              or hire more people.
+            </p>
+
+            <h2>5. Why Bank "Narrations" Matter Now</h2>
+            <p>
+              NRS (formerly FIRS) get new digital eyes. If they see ₦100k enter
+              your account, the system fit think say na business profit. But if
+              na your brother send you money for Mama hospital bill, use our
+              <strong>"Gift / Family Support"</strong> tag. This one go tell the
+              system say:
+              <em>"Abeg shift, this one no be profit, na family matter!"</em>
+            </p>
+
+            <h2>6. What to Expect (The Digital Shift)</h2>
+            <p>
+              From 2026, everything go dey digital. You no need to go carry
+              paper go tax office. Everything go happen for your phone or
+              computer. But wait o, because everything dey digital, they go fit
+              see person wey dey hide money fast fast.
+              <strong>Compliance na the new "cool."</strong>
+            </p>
+
+            <div class="summary-box">
+              <h3>💡 The "Bottom Line"</h3>
+              <p>
+                The 2026 reform na to make tax "progressive." E mean say: if you
+                earn small, you pay zero or very small. If you be "Big Man" wey
+                dey earn millions, you go pay your fair share to help build the
+                country.
+              </p>
+            </div>
+          </article>
+
+          <div class="legal-disclaimer">
+            <p>
+              <strong>⚠️ Legal Disclaimer:</strong> The information provided on
+              this page and the results from the calculator are for
+              <strong>general information purposes only</strong>. While we sabi
+              the law, tax matters fit change based on person-to-person
+              situation. This is not financial, legal, or professional tax
+              advice. Always consult with a certified tax professional or the
+              <strong>Nigeria Revenue Service (NRS)</strong> before you make any
+              big financial move. Use of this tool is at your own risk.
+            </p>
+          </div>
+
+          <button
+            class="copy-btn"
+            style="width: 100%; margin-top: 30px"
+            onclick="showPage('home')"
+          >
+            Back to Calculator
+          </button>
+        </section>
+      </div>
+    </main>
+
+    <div id="warningModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2 style="color: #991b1b; border-color: #991b1b">⚠️ Safety Warning</h2>
+        <p><strong>Do not use these tags to hide business income.</strong></p>
+        <p>
+          Under the 2026 Tax Act, "False Declarations" carry heavy penalties:
+        </p>
+        <ul style="font-size: 0.9rem; line-height: 1.6">
+          <li><strong>₦1,000,000 fine</strong> for false statements.</li>
+          <li><strong>100% Penalty</strong> on any hidden VAT.</li>
+          <li>
+            <strong>Up to 3 years jail</strong> for deliberate tax evasion.
+          </li>
+        </ul>
+        <p style="font-size: 0.8rem; font-style: italic">
+          Only use these narrations for their true legal purpose.
+        </p>
+        <button
+          class="copy-btn"
+          style="background: #333; width: 100%"
+          onclick="closeModal()"
+        >
+          I Understand
+        </button>
+      </div>
+    </div>
+
+    <div id="kunuModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeKunu()">&times;</span>
+        <h2 style="text-align: center; color: #f59e0b; margin-bottom: 5px">
+          Bless the Developer! 🥤
+        </h2>
+
+        <p
+          style="
+            text-align: center;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            line-height: 1.4;
+          "
+        >
+          If this tool don save you <strong>"Premium Headache"</strong>, abeg
+          buy chilled Kunu for your boy make he no dry!
+        </p>
+        <p
+          style="
+            text-align: center;
+            font-size: 0.8rem;
+            font-style: italic;
+            color: #666;
+            margin-top: 15px;
+          "
+        >
+          "Small chilled Kunu, big brain work." — Ancient Proverb 🇳🇬
+        </p>
+
+        <div class="support-card">
+          <div class="support-info">
+            <span class="label">ACCOUNT NUMBER</span>
+            <span class="value">8037166842</span>
+            <span class="sub-value">Moniepoint MFB • Jude Ogbonna Ebeke</span>
+          </div>
+          <button class="mini-copy-btn" onclick="performCopy('8037166842')">
+            Copy
+          </button>
+        </div>
+
+        <div class="support-card">
+          <div class="support-info">
+            <span class="label">USE THIS NARRATION</span>
+            <span class="value" style="font-size: 0.95rem"
+              >Gift / Family support</span
+            >
+            <span class="sub-value">This tag keeps the transfer tax-free.</span>
+          </div>
+          <button
+            class="mini-copy-btn"
+            onclick="performCopy('Gift / Family support')"
+          >
+            Copy
+          </button>
+        </div>
+
+        <p
+          style="
+            text-align: center;
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 15px;
+          "
+        >
+          God bless you as you support! 🙌
+        </p>
+      </div>
+    </div>
+
+    <div id="toast" class="toast">Copied!</div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
+
+<!-- would you like me to add a "Goal Tracker" (e.g., "Help me reach 10 cups of Kunu today") 
+ to show a progress bar of how many people have clicked to copy your details -->
