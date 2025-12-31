@@ -25,6 +25,16 @@ const narrations = [
     text: "Capital contribution",
     desc: "When you carry your own personal savings start business or put money inside your shop account.",
   },
+  {
+    label: "POS Operators",
+    text: "POS transaction / Agent cashout",
+    desc: "If you be agent, make customers use this so NRS sabi say the money no be your profit, na cash you dey swap.",
+  },
+  {
+    label: "Sales / Trade",
+    text: "Payment for [Item Name]",
+    desc: "Be specific! E.g., 'Payment for 2 cartons of Indomie'. This clears your business records and stops double tax.",
+  },
 ];
 
 const themeToggle = document.getElementById("themeToggle");
