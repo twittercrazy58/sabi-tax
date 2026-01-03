@@ -64,16 +64,16 @@ function updateQuotaUI() {
   const percentage = (remaining / LIMIT) * 100;
 
   // 2. Update the UI Elements
-  const countEl = document.getElementById("quota-count");
-  const fillEl = document.getElementById("quota-fill");
+  document.getElementById("quota-count").innerText = `${remaining}/${LIMIT}`;
 
-  if (countEl) countEl.innerText = `${remaining}/${LIMIT}`;
-  if (fillEl) {
-    fillEl.style.width = `${percentage}%`;
-    fillEl.classList.remove("quota-low", "quota-empty");
-    if (remaining === 1) fillEl.classList.add("quota-low");
-    if (remaining === 0) fillEl.classList.add("quota-empty");
-  }
+  // Update Bar
+  const fill = document.getElementById("quota-fill");
+  fill.style.width = `${percentage}%`;
+
+  // Update Colors based on remaining tries
+  fill.classList.remove("quota-low", "quota-empty");
+  if (remaining === 1) fill.classList.add("quota-low");
+  if (remaining === 0) fill.classList.add("quota-empty");
 
   return { allowed: remaining > 0, usage, remaining };
 }

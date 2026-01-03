@@ -191,7 +191,15 @@
           <p class="subtitle">
             Type your transfer narration to see if it's "Tax-Safe."
           </p>
-
+          <div class="quota-container">
+            <div class="quota-header">
+              <span>Free Checks Remaining</span>
+              <span id="quota-count">3/3</span>
+            </div>
+            <div class="quota-bar-bg">
+              <div id="quota-fill" class="quota-fill" style="width: 100%"></div>
+            </div>
+          </div>
           <div class="input-group">
             <label>Enter Transfer Narration</label>
             <div class="horizontal-layout">
@@ -200,19 +208,7 @@
                 id="narrationInput"
                 placeholder="e.g. Payment for goods"
               />
-              <div class="quota-container">
-                <div class="quota-header">
-                  <span>Free Checks Remaining</span>
-                  <span id="quota-count">3/3</span>
-                </div>
-                <div class="quota-bar-bg">
-                  <div
-                    id="quota-fill"
-                    class="quota-fill"
-                    style="width: 100%"
-                  ></div>
-                </div>
-              </div>
+
               <button
                 id="checkBtn"
                 class="sabi-btn"
