@@ -106,8 +106,6 @@ async function processNarration() {
     });
 
     if (!response.ok) {
-      // If the server returns 400, 500, etc., we throw an error
-      // to skip the quota-saving logic below.
       throw new Error(`Server Error: ${response.status}`);
     }
 
@@ -250,6 +248,7 @@ window.checkNarration =
   typeof checkNarration !== "undefined" ? checkNarration : () => {};
 window.calculateTax = calculateTax;
 window.calculateBankFees = calculateBankFees;
+
 window.toggleIncomeType = () => {
   const isAnnual = document.getElementById("incomeTypeToggle").checked;
   document.getElementById("salaryLabel").innerText = isAnnual
@@ -303,6 +302,30 @@ window.shareToWhatsapp = () => {
   const msg = `Check out SabiTax 2026! It helps you calculate new tax and bank fees: ${window.location.href}`;
   window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
 };
+
+const themeToggle = document.getElementById("themeToggle");
+const themeIcon = document.getElementById("themeIcon");
+const htmlElement = document.documentElement; // This targets the <html> tag
+
+// 1. Check for saved theme
+const savedTheme = localStorage.getItem("theme") || "light";
+htmlElement.setAttribute("data-theme", savedTheme);
+updateIcon(savedTheme);
+
+themeToggle.addEventListener("click", () => {
+  // 2. Flip the theme
+  const currentTheme = htmlElement.getAttribute("data-theme");
+  const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+  // 3. Apply and Save
+  htmlElement.setAttribute("data-theme", newTheme);
+  localStorage.setItem("theme", newTheme);
+  updateIcon(newTheme);
+});
+
+function updateIcon(theme) {
+  themeIcon.innerText = theme === "dark" ? "☀️" : "🌙";
+}
 
 // Start
 init();
