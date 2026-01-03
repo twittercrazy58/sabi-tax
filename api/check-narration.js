@@ -24,7 +24,6 @@ export default async function handler(req, res) {
 
   // Use the secret key you'll save in Vercel Settings
   const ai = new GoogleGenAI({ apiKey: apiKey });
-  console.log(process.env.GEMINI_API_KEY);
 
   try {
     const response = await ai.models.generateContent({
