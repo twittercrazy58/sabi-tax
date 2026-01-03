@@ -47,8 +47,38 @@ function debounce(func, timeout = 1200) {
   };
 }
 
-// const API_KEY = "AIzaSyCRbLQ_g3dcKa2M8JhJk_aqEr_H1ruzUgs";
-// const ai = new GoogleGenAI({ apiKey: API_KEY });
+const LIMIT = 3;
+const WINDOW_MS = 10 * 60 * 1000;
+
+function updateQuotaUI() {
+  const now = Date.now();
+  let usage = JSON.parse(localStorage.getItem("sabitax_usage") || "[]");
+
+  // 1. Clean up old timestamps first
+  usage = usage.filter((timestamp) => now - timestamp < WINDOW_MS);
+
+  // Save the cleaned list back to keep storage healthy
+  localStorage.setItem("sabitax_usage", JSON.stringify(usage));
+
+  const remaining = Math.max(0, LIMIT - usage.length);
+  const percentage = (remaining / LIMIT) * 100;
+
+  // 2. Update the UI Elements
+  const countEl = document.getElementById("quota-count");
+  const fillEl = document.getElementById("quota-fill");
+
+  if (countEl) countEl.innerText = `${remaining}/${LIMIT}`;
+  if (fillEl) {
+    fillEl.style.width = `${percentage}%`;
+    fillEl.classList.remove("quota-low", "quota-empty");
+    if (remaining === 1) fillEl.classList.add("quota-low");
+    if (remaining === 0) fillEl.classList.add("quota-empty");
+  }
+
+  return { allowed: remaining > 0, usage, remaining };
+}
+// Initialize on page load
+window.onload = updateQuotaUI;
 
 async function processNarration() {
   const input = document.getElementById("narrationInput").value;
@@ -58,6 +88,20 @@ async function processNarration() {
   const standardElement = document.getElementById("standardNarration");
 
   if (input.length < 5) return;
+
+  // 1. Check quota using the UI function's return value
+  const quota = updateQuotaUI();
+
+  if (!quota.allowed) {
+    const oldestRequest = quota.usage[0];
+    const waitTime = Math.ceil(
+      (WINDOW_MS - (Date.now() - oldestRequest)) / 60000
+    );
+
+    text.innerHTML = `<b>Oga, slow down!</b> You don check 3 times already. Abeg wait <b>${waitTime} minutes</b>.`;
+    resultBox.className = "narration-feedback status-warning";
+    return;
+  }
 
   // UI Loading State
   checkBtn.disabled = true;
@@ -74,6 +118,10 @@ async function processNarration() {
 
     const data = await response.json();
     const fullResponse = data.text;
+
+    const updatedUsage = [...quota.usage, Date.now()];
+    localStorage.setItem("sabitax_usage", JSON.stringify(updatedUsage));
+    updateQuotaUI();
 
     // Split for the Suggestion Card
     const parts = fullResponse.split("SUGGESTION:");

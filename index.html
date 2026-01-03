@@ -200,6 +200,19 @@
                 id="narrationInput"
                 placeholder="e.g. Payment for goods"
               />
+              <div class="quota-container">
+                <div class="quota-header">
+                  <span>Free Checks Remaining</span>
+                  <span id="quota-count">3/3</span>
+                </div>
+                <div class="quota-bar-bg">
+                  <div
+                    id="quota-fill"
+                    class="quota-fill"
+                    style="width: 100%"
+                  ></div>
+                </div>
+              </div>
               <button
                 id="checkBtn"
                 class="sabi-btn"
@@ -220,9 +233,7 @@
               <span>✅ Recommended Standard</span>
               <button class="copy-btn" onclick="copySuggestion()">Copy</button>
             </div>
-            <code id="standardNarration"
-              ></code
-            >
+            <code id="standardNarration"></code>
           </div>
 
           <div class="pro-tip">
