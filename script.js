@@ -36,17 +36,6 @@ const narrations = [
   },
 ];
 
-// 1. Create the Debounce wrapper
-function debounce(func, timeout = 1200) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      func.apply(this, args);
-    }, timeout);
-  };
-}
-
 const LIMIT = 3;
 const WINDOW_MS = 10 * 60 * 1000;
 
@@ -64,6 +53,7 @@ function updateQuotaUI() {
   const percentage = (remaining / LIMIT) * 100;
 
   // 2. Update the UI Elements
+
   document.getElementById("quota-count").innerText = `${remaining}/${LIMIT}`;
 
   // Update Bar
@@ -116,6 +106,12 @@ async function processNarration() {
       body: JSON.stringify({ narration: input }),
     });
 
+    if (!response.ok) {
+      // If the server returns 400, 500, etc., we throw an error
+      // to skip the quota-saving logic below.
+      throw new Error(`Server Error: ${response.status}`);
+    }
+
     const data = await response.json();
     const fullResponse = data.text;
 
@@ -139,6 +135,7 @@ async function processNarration() {
       ? "narration-feedback status-safe"
       : "narration-feedback status-warning";
   } catch (error) {
+    console.log(error);
     text.innerText = "Connection issue. Try again later!";
   } finally {
     checkBtn.disabled = false;
