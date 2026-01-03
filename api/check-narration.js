@@ -7,10 +7,23 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    console.error(
+      "Vercel Error: GEMINI_API_KEY is missing from environment variables."
+    );
+    return res
+      .status(500)
+      .json({ error: "Backend Configuration Error: Missing API Key" });
+  }
+
   const { narration } = req.body;
+  if (!narration) {
+    return res.status(400).json({ error: "No narration text provided" });
+  }
 
   // Use the secret key you'll save in Vercel Settings
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const ai = new GoogleGenAI({ apiKey: apiKey });
   console.log(process.env.GEMINI_API_KEY);
 
   try {
@@ -43,6 +56,7 @@ Start with the CATEGORY in bold.`,
         },
       ],
       thinkingConfig: { thinkingBudget: 0 },
+      temperature: 0.1,
     });
     // Send the text back to your frontend
     res.status(200).json({ text: response.text });
