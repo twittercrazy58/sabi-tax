@@ -93,7 +93,6 @@ async function processNarration() {
     return;
   }
 
-  // UI Loading State
   checkBtn.disabled = true;
   checkBtn.innerText = "Checking...";
   text.innerText = "SabiAI is looking into 2026 Tax Rules...";
