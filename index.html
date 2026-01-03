@@ -77,23 +77,37 @@
         </header>
 
         <section class="container">
-          <h2>2026 PAYE Calculator</h2>
+          <div class="header-flex">
+            <h2>2026 PAYE Calculator</h2>
+            <div class="toggle-container">
+              <span class="toggle-label">Monthly</span>
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  id="incomeTypeToggle"
+                  onchange="toggleIncomeType()"
+                />
+                <span class="slider round"></span>
+              </label>
+              <span class="toggle-label">Annual</span>
+            </div>
+          </div>
 
           <div class="input-group">
-            <label>Monthly Salary (₦)</label>
+            <label id="salaryLabel">Monthly Salary (₦)</label>
             <input
               type="number"
-              id="monthlySalary"
+              id="salaryInput"
               oninput="calculateTax()"
               placeholder="e.g. 200000"
             />
           </div>
 
-          <div class="font-variant-numeric: tabular-nums;">
-            <label>Monthly Rent (₦)</label>
+          <div class="input-group">
+            <label id="rentLabel">Monthly Rent (₦)</label>
             <input
               type="number"
-              id="monthlyRent"
+              id="rentInput"
               oninput="calculateTax()"
               placeholder="For 20% Rent Relief"
             />
@@ -104,24 +118,65 @@
               <span>Status:</span> <span id="taxStatus" class="badge">--</span>
             </div>
             <div class="result-row">
-              <span>Monthly Tax:</span> <span id="monthlyTax">₦0</span>
+              <span id="resultTaxLabel">Monthly Tax:</span>
+              <span id="monthlyTax" class="tabular-nums">₦0</span>
             </div>
             <div class="result-row">
-              <span>Take-Home:</span> <span id="netPay">₦0</span>
+              <span id="resultNetLabel">Take-Home:</span>
+              <span id="netPay" class="tabular-nums">₦0</span>
             </div>
           </div>
 
-          <p
-            id="complianceNotice"
-            style="
-              font-size: 0.75rem;
-              color: #d97706;
-              margin-top: 10px;
-              display: none;
-            "
-          >
+          <p id="complianceNotice" class="warning-text" style="display: none">
             ⚠️ Note: Your income high. Abeg make you file your returns by March
             31st so you no go pay ₦50k fine.
+          </p>
+        </section>
+
+        <section class="container bank-calculator">
+          <div class="header-flex">
+            <h2>2026 Bank Fee Saver</h2>
+            <div class="toggle-container">
+              <span class="toggle-label">Individual</span>
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  id="accountTypeToggle"
+                  onchange="calculateBankFees()"
+                />
+                <span class="slider round"></span>
+              </label>
+              <span class="toggle-label">Business</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>Weekly Cash Withdrawal (₦)</label>
+            <input
+              type="number"
+              id="withdrawalInput"
+              oninput="calculateBankFees()"
+              placeholder="e.g. 700000"
+            />
+            <small class="input-hint">Note: ATM daily limit is ₦100k</small>
+          </div>
+
+          <div class="fee-results">
+            <div class="result-row">
+              <span>2026 Penalty Fee:</span>
+              <span id="penaltyFee" class="fee-text">₦0</span>
+            </div>
+            <div class="save-box">
+              <p>
+                <strong>🎉 2026 Deposit Bonus:</strong> You now pay
+                <span class="green-text">₦0</span> on all cash deposits!
+              </p>
+            </div>
+          </div>
+
+          <p class="policy-note">
+            *Weekly Withdrawal fees apply only on amounts above ₦500k (Indiv) or
+            ₦5M (Corp) weekly.
           </p>
         </section>
 
@@ -129,6 +184,52 @@
           <h2>Transfer Narrations</h2>
           <p>Use these to describe non-taxable inflows:</p>
           <div id="narrationList"></div>
+        </section>
+
+        <section class="container narration-checker">
+          <h2>Narration Smart-Checker</h2>
+          <p class="subtitle">
+            Type your transfer narration to see if it's "Tax-Safe."
+          </p>
+
+          <div class="input-group">
+            <label>Enter Transfer Narration</label>
+            <div class="horizontal-layout">
+              <input
+                type="text"
+                id="narrationInput"
+                placeholder="e.g. Payment for goods"
+              />
+              <button
+                id="checkBtn"
+                class="sabi-btn"
+                onclick="processNarration()"
+              >
+                Check Risk
+              </button>
+            </div>
+          </div>
+
+          <div id="narrationResult" class="narration-feedback">
+            <div class="feedback-icon">🔍</div>
+            <div class="feedback-text">Enter narration and click check...</div>
+          </div>
+
+          <div class="suggestion-card">
+            <div class="suggestion-header">
+              <span>✅ Recommended Standard</span>
+              <button class="copy-btn" onclick="copySuggestion()">Copy</button>
+            </div>
+            <code id="standardNarration"
+              ></code
+            >
+          </div>
+
+          <div class="pro-tip">
+            <strong>💡 SabiTip:</strong> The 2026 Guidelines require banks to
+            provide "Type of Payment" and "Period Covered" for every tax-related
+            transfer.
+          </div>
         </section>
 
         <div style="text-align: center; margin-bottom: 40px">
@@ -239,6 +340,86 @@
               see person wey dey hide money fast fast.
               <strong>Compliance na the new "cool."</strong>
             </p>
+
+            <section class="tax-authority-guide">
+              <h2>7. Who Collects What? (Federal vs. State vs. Local)</h2>
+              <p>
+                Small business owners often face "Double Taxation" because they
+                don't know which agency is legally allowed to collect specific
+                fees. Per the 2026 Guidelines, here is the official breakdown:
+              </p>
+
+              <div class="tax-grid">
+                <div class="tax-card federal">
+                  <h3>NRS (Federal)</h3>
+                  <ul>
+                    <li>
+                      <strong>CIT:</strong> Company Income Tax (for big
+                      companies).
+                    </li>
+                    <li>
+                      <strong>VAT:</strong> Value Added Tax (7.5% on
+                      goods/services).
+                    </li>
+                    <li>
+                      <strong>Education Tax:</strong> For registered companies.
+                    </li>
+                    <li>
+                      <strong>Stamp Duties:</strong> On electronic transfers and
+                      docs.
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="tax-card state">
+                  <h3>State Government</h3>
+                  <ul>
+                    <li>
+                      <strong>PAYE:</strong> Personal Income Tax from your
+                      salary.
+                    </li>
+                    <li>
+                      <strong>Withholding Tax:</strong> On
+                      individuals/contracts.
+                    </li>
+                    <li>
+                      <strong>Road Taxes:</strong> Vehicle license and plate
+                      numbers.
+                    </li>
+                    <li>
+                      <strong>Business Premises:</strong> Yearly registration of
+                      your shop.
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="tax-card local">
+                  <h3>Local Government</h3>
+                  <ul>
+                    <li>
+                      <strong>Shop & Kiosk Rates:</strong> For small
+                      containers/stalls.
+                    </li>
+                    <li>
+                      <strong>Signage & Advertisement:</strong> For your shop
+                      boards.
+                    </li>
+                    <li>
+                      <strong>Liquor Licenses:</strong> If you sell drinks.
+                    </li>
+                    <li>
+                      <strong>Radio/TV License:</strong> For shop electronics.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="pro-tip">
+                <strong>💡 SabiTip:</strong> If a local government official asks
+                for "Company Income Tax," tell them NO. Only the Federal
+                Government (NRS) collects that. This knowledge saves you money!
+              </div>
+            </section>
 
             <div class="summary-box">
               <h3>💡 The "Bottom Line"</h3>
@@ -375,7 +556,54 @@
 
     <div id="toast" class="toast">Copied!</div>
 
-    <script src="script.js"></script>
+    <footer class="main-footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <div class="logo">
+            Sabi<span class="sabi-text">Tax</span>
+            <span class="year-text">2026</span>
+          </div>
+          <p>
+            Making Nigerian tax laws simple for everyone. No more government
+            grammar.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#" onclick="showPage('home')">Tax Calculator</a></li>
+            <li><a href="#" onclick="showPage('about')">The 2026 Gist</a></li>
+            <li>
+              <a href="https://x.com/JdOgbonna" target="_blank"
+                >X (Formerly Twitter)</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div class="footer-support">
+          <h4>Support the Hustle</h4>
+          <p>If this tool saved you stress, you fit buy us Kunu.</p>
+          <button class="kunu-btn-small" onclick="openKunuModal()">
+            💰 Support SabiTax
+          </button>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 SabiTax Nigeria. Built for the People. 🇳🇬</p>
+        <div class="footer-legal">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+        </div>
+      </div>
+    </footer>
+    <button id="backToTop" class="back-to-top" aria-label="Scroll to top">
+      <span class="arrow">↑</span>
+    </button>
+
+    <script type="module" src="script.js"></script>
   </body>
 </html>
 

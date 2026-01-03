@@ -1,4 +1,3 @@
-// 1. Narration Data
 const narrations = [
   {
     label: "Family & Black Tax",
@@ -37,29 +36,144 @@ const narrations = [
   },
 ];
 
-const themeToggle = document.getElementById("themeToggle");
-const themeIcon = document.getElementById("themeIcon");
-const currentTheme = localStorage.getItem("theme") || "light";
-
-// Apply saved theme on load
-if (currentTheme === "dark") {
-  document.documentElement.setAttribute("data-theme", "dark");
-  themeIcon.innerText = "☀️";
+// 1. Create the Debounce wrapper
+function debounce(func, timeout = 1200) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(this, args);
+    }, timeout);
+  };
 }
 
-themeToggle.addEventListener("click", () => {
-  let theme = document.documentElement.getAttribute("data-theme");
-  if (theme === "dark") {
-    document.documentElement.setAttribute("data-theme", "light");
-    localStorage.setItem("theme", "light");
-    themeIcon.innerText = "🌙";
-  } else {
-    document.documentElement.setAttribute("data-theme", "dark");
-    localStorage.setItem("theme", "dark");
-    themeIcon.innerText = "☀️";
+// const API_KEY = "AIzaSyCRbLQ_g3dcKa2M8JhJk_aqEr_H1ruzUgs";
+// const ai = new GoogleGenAI({ apiKey: API_KEY });
+
+async function processNarration() {
+  const input = document.getElementById("narrationInput").value;
+  const resultBox = document.getElementById("narrationResult");
+  const checkBtn = document.getElementById("checkBtn");
+  const text = resultBox.querySelector(".feedback-text");
+  const standardElement = document.getElementById("standardNarration");
+
+  if (input.length < 5) return;
+
+  // UI Loading State
+  checkBtn.disabled = true;
+  checkBtn.innerText = "Checking...";
+  text.innerText = "SabiAI is looking into 2026 Tax Rules...";
+
+  try {
+    // We call our OWN Vercel API, not Google directly
+    const response = await fetch("/api/check-narration", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ narration: input }),
+    });
+
+    const data = await response.json();
+    const fullResponse = data.text;
+
+    // Split for the Suggestion Card
+    const parts = fullResponse.split("SUGGESTION:");
+    const advicePart = parts[0].trim();
+    const suggestionPart = parts[1]
+      ? parts[1].trim()
+      : "Payment - Jan 2026 - TIN:12345";
+
+    // Update UI elements
+    text.innerHTML = advicePart;
+    if (standardElement) standardElement.innerText = suggestionPart;
+
+    // Color feedback
+    resultBox.className = fullResponse.includes("SAFE")
+      ? "narration-feedback status-safe"
+      : "narration-feedback status-warning";
+  } catch (error) {
+    text.innerText = "Connection issue. Try again later!";
+  } finally {
+    checkBtn.disabled = false;
+    checkBtn.innerText = "Check Risk";
   }
-});
-// --- 2. INITIALIZATION: Build the Narration Cards ---
+}
+
+// Copy Function
+function copySuggestion() {
+  const text = document.getElementById("standardNarration").innerText;
+  navigator.clipboard.writeText(text);
+
+  const toast = document.getElementById("toast");
+  toast.style.display = "block";
+  setTimeout(() => (toast.style.display = "none"), 1500);
+}
+
+window.processNarration = processNarration;
+window.copySuggestion = copySuggestion;
+
+// --- TAX LOGIC ---
+function calculateTax() {
+  const incomeInput =
+    parseFloat(document.getElementById("salaryInput").value) || 0;
+  const rentInput = parseFloat(document.getElementById("rentInput").value) || 0;
+  const isAnnual = document.getElementById("incomeTypeToggle").checked;
+
+  let annualIncome = isAnnual ? incomeInput : incomeInput * 12;
+  let annualRent = isAnnual ? rentInput : rentInput * 12;
+
+  if (annualIncome <= 800000) {
+    updateUI(0, annualIncome, "Exempt", isAnnual);
+    return;
+  }
+
+  let rentRelief = Math.min(annualRent * 0.2, 500000);
+  let taxableIncome = annualIncome - 800000 - rentRelief;
+  if (taxableIncome < 0) taxableIncome = 0;
+
+  let annualTax = taxableIncome * 0.1; // Simple 2026 Base Rate
+  updateUI(annualTax, annualIncome, "Taxable", isAnnual);
+}
+
+function updateUI(totalAnnualTax, totalAnnualIncome, status, isAnnual) {
+  const taxToDisplay = isAnnual ? totalAnnualTax : totalAnnualTax / 12;
+  const netToDisplay = isAnnual
+    ? totalAnnualIncome - totalAnnualTax
+    : (totalAnnualIncome - totalAnnualTax) / 12;
+
+  document.getElementById(
+    "monthlyTax"
+  ).innerText = `₦${taxToDisplay.toLocaleString(undefined, {
+    maximumFractionDigits: 0,
+  })}`;
+  document.getElementById("netPay").innerText = `₦${netToDisplay.toLocaleString(
+    undefined,
+    { maximumFractionDigits: 0 }
+  )}`;
+
+  const statusBadge = document.getElementById("taxStatus");
+  statusBadge.innerText = status;
+  statusBadge.className =
+    "badge " + (status === "Exempt" ? "exempt" : "taxable");
+
+  document.getElementById("complianceNotice").style.display =
+    totalAnnualIncome > 5000000 ? "block" : "none";
+}
+
+// --- BANK FEE LOGIC ---
+function calculateBankFees() {
+  const amount =
+    parseFloat(document.getElementById("withdrawalInput").value) || 0;
+  const isBusiness = document.getElementById("accountTypeToggle").checked;
+  const limit = isBusiness ? 5000000 : 500000;
+  const feeRate = isBusiness ? 0.05 : 0.03;
+
+  let penalty = amount > limit ? (amount - limit) * feeRate : 0;
+  const el = document.getElementById("penaltyFee");
+  el.innerText = `₦${penalty.toLocaleString()}`;
+  el.style.color = penalty > 0 ? "#e63946" : "var(--green-main)";
+}
+
+// --- INITIALIZATION & GLOBAL MAPPING ---
 function init() {
   const list = document.getElementById("narrationList");
   if (!list) return;
@@ -68,162 +182,83 @@ function init() {
     const div = document.createElement("div");
     div.className = "card";
     div.innerHTML = `
-            <div style="flex: 1; padding-right: 10px;">
-                <div style="font-size:0.75rem; color:var(--green); font-weight:bold">${item.label.toUpperCase()}</div>
-                <div style="font-size:1.05rem; font-weight:bold; margin: 4px 0;">"${
-                  item.text
-                }"</div>
-                <div style="font-size:0.8rem; color:#666; line-height:1.4">${
-                  item.desc
-                }</div>
-            </div>
-            <button class="copy-btn" onclick="handleCopy('${
+        <div style="flex: 1; padding-right: 10px;">
+            <div style="font-size:0.75rem; color:var(--green); font-weight:bold">${item.label.toUpperCase()}</div>
+            <div style="font-size:1.05rem; font-weight:bold; margin: 4px 0;">"${
               item.text
-            }')">Copy</button>
-        `;
+            }"</div>
+            <div style="font-size:0.8rem; color:#666; line-height:1.4">${
+              item.desc
+            }</div>
+        </div>
+        <button class="copy-btn" onclick="handleCopy('${
+          item.text
+        }')">Copy</button>
+    `;
     list.appendChild(div);
   });
+  console.log("SabiTax Engine: Initialized 2026 Settings.");
 }
 
-// --- 3. COPY LOGIC: Show Warning Once Per Device ---
-function handleCopy(text) {
-  const hasSeenWarning = localStorage.getItem("taxWarningSeen");
+window.processNarration = processNarration;
 
-  if (hasSeenWarning) {
-    // Already warned before; copy immediately
-    performCopy(text);
-  } else {
-    // First time on this device; show the legal warning
+window.checkNarration =
+  typeof checkNarration !== "undefined" ? checkNarration : () => {};
+window.calculateTax = calculateTax;
+window.calculateBankFees = calculateBankFees;
+window.toggleIncomeType = () => {
+  const isAnnual = document.getElementById("incomeTypeToggle").checked;
+  document.getElementById("salaryLabel").innerText = isAnnual
+    ? "Annual Salary (₦)"
+    : "Monthly Salary (₦)";
+  document.getElementById("rentLabel").innerText = isAnnual
+    ? "Annual Rent (₦)"
+    : "Monthly Rent (₦)";
+  document.getElementById("resultTaxLabel").innerText = isAnnual
+    ? "Annual Tax:"
+    : "Monthly Tax:";
+  document.getElementById("resultNetLabel").innerText = isAnnual
+    ? "Annual Net Pay:"
+    : "Monthly Net Pay:";
+  calculateTax();
+};
+window.handleCopy = (text) => {
+  if (localStorage.getItem("taxWarningSeen")) performCopy(text);
+  else {
     document.getElementById("warningModal").style.display = "block";
     window.pendingCopy = text;
   }
-}
-
-function closeModal() {
+};
+window.closeModal = () => {
   document.getElementById("warningModal").style.display = "none";
-
-  // Remember this device has seen the warning
   localStorage.setItem("taxWarningSeen", "true");
-
   if (window.pendingCopy) {
     performCopy(window.pendingCopy);
     window.pendingCopy = null;
   }
-}
-
-function performCopy(text) {
-  navigator.clipboard
-    .writeText(text)
-    .then(() => {
-      showToast();
-    })
-    .catch((err) => {
-      console.error("Could not copy text: ", err);
-    });
-}
-
-function showToast() {
-  const toast = document.getElementById("toast");
-  if (toast) {
+};
+window.performCopy = (text) => {
+  navigator.clipboard.writeText(text).then(() => {
+    const toast = document.getElementById("toast");
     toast.style.display = "block";
     setTimeout(() => (toast.style.display = "none"), 1500);
-  }
-}
+  });
+};
+window.showPage = (pageId) => {
+  document.getElementById("homePage").style.display =
+    pageId === "home" ? "block" : "none";
+  document.getElementById("aboutPage").style.display =
+    pageId === "about" ? "block" : "none";
+  window.scrollTo(0, 0);
+};
+window.openKunuModal = () =>
+  (document.getElementById("kunuModal").style.display = "block");
+window.closeKunu = () =>
+  (document.getElementById("kunuModal").style.display = "none");
+window.shareToWhatsapp = () => {
+  const msg = `Check out SabiTax 2026! It helps you calculate new tax and bank fees: ${window.location.href}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+};
 
-// --- 4. CALCULATOR LOGIC: 2026 Progressive Bands ---
-function calculateTax() {
-  const monthlyGross =
-    parseFloat(document.getElementById("monthlySalary").value) || 0;
-  const monthlyRent =
-    parseFloat(document.getElementById("monthlyRent").value) || 0;
-
-  // Deductions: 8% Pension and 20% Rent (Capped at 500k/yr)
-  const pension = monthlyGross * 0.08;
-  const rentRelief = Math.min(monthlyRent, monthlyGross * 0.2, 41666);
-
-  const taxableMonthly = Math.max(0, monthlyGross - pension - rentRelief);
-  const taxableAnnual = taxableMonthly * 12;
-
-  let annualTax = 0;
-  let remaining = taxableAnnual;
-
-  // Apply 2026 Bands (0% for first 800k, then 15%, 18%, 21%, 23%, 25%)
-  if (remaining > 800000) {
-    remaining -= 800000;
-
-    const bands = [
-      { limit: 2200000, rate: 0.15 },
-      { limit: 9000000, rate: 0.18 },
-      { limit: 13000000, rate: 0.21 },
-      { limit: 25000000, rate: 0.23 },
-      { limit: Infinity, rate: 0.25 },
-    ];
-
-    for (let band of bands) {
-      if (remaining <= 0) break;
-      let chunk = Math.min(remaining, band.limit);
-      annualTax += chunk * band.rate;
-      remaining -= chunk;
-    }
-  }
-
-  const monthlyTax = annualTax / 12;
-  updateUI(
-    monthlyTax,
-    monthlyGross,
-    taxableAnnual <= 800000 ? "Exempt" : "Taxable"
-  );
-}
-
-function updateUI(tax, gross, status) {
-  document.getElementById("monthlyTax").innerText = `₦${tax.toLocaleString(
-    undefined,
-    { minimumFractionDigits: 2 }
-  )}`;
-  document.getElementById("netPay").innerText = `₦${(
-    gross - tax
-  ).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
-
-  const statusEl = document.getElementById("taxStatus");
-  statusEl.innerText = status;
-  statusEl.className = status === "Exempt" ? "badge exempt" : "badge taxable";
-
-  const notice = document.getElementById("complianceNotice");
-  if (notice) notice.style.display = status === "Taxable" ? "block" : "none";
-}
-
-function openKunuModal() {
-  document.getElementById("kunuModal").style.display = "block";
-}
-function closeKunu() {
-  document.getElementById("kunuModal").style.display = "none";
-}
-
-function copyKunu() {
-  const text = "Acc: 8037166842 (Moniepoint). Narration: Gift / Family support";
-  performCopy(text);
-  closeKunu();
-}
-
-function shareToWhatsapp() {
-  const siteUrl = window.location.href; // This gets your current site link
-  const message = `Check out this TaxSabi 2026 tool! It helps you calculate your new tax and gives you the right narrations to use for bank transfers so you no go pay tax for money wey no be profit. Check am here: ${siteUrl}`;
-
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-  window.open(whatsappUrl, "_blank");
-}
-
-function showPage(pageId) {
-  if (pageId === "home") {
-    document.getElementById("homePage").style.display = "block";
-    document.getElementById("aboutPage").style.display = "none";
-    window.scrollTo(0, 0);
-  } else if (pageId === "about") {
-    document.getElementById("homePage").style.display = "none";
-    document.getElementById("aboutPage").style.display = "block";
-    window.scrollTo(0, 0);
-  }
-}
-
-// Start everything
-window.onload = init;
+// Start
+init();
